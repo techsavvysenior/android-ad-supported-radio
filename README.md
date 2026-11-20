@@ -106,7 +106,7 @@ This is a sample, not a published app.
 
 Checked November 2026: AGP 9.5.1, Gradle 9.9.1, Kotlin 2.4.21, Compose BOM 2026.11.01, Media3
 1.11.1, GMA Next-Gen SDK 1.7.0, AppLovin adapter 13.7.0.0, AppsFlyer 7.0.4, Meta SDK 19.0.1,
-OkHttp 5.5.1, Coil 3.6.3, Robolectric 4.18.1, Roborazzi 1.77.0. compileSdk 37.2, targetSdk 36,
+OkHttp 5.5.1, Coil 3.6.3, Robolectric 4.18.1, Roborazzi 1.79.0. compileSdk 37.2, targetSdk 36,
 minSdk 26.
 
 ## License
