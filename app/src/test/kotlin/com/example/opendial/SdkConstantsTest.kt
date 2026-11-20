@@ -1,7 +1,7 @@
 package com.example.opendial
 
-import com.appsflyer.AFInAppEventParameterName
-import com.appsflyer.AFInAppEventType
+import com.appsflyer.share.AFInAppEventParameterName
+import com.appsflyer.share.AFInAppEventType
 import com.example.opendial.core.analytics.AnalyticsEvent
 import com.example.opendial.core.analytics.EventMapping
 import com.facebook.appevents.AppEventsConstants
