@@ -26,10 +26,12 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -75,72 +77,76 @@ fun NowPlayingScreen(
             .background(bg)
             .background(Brush.verticalGradient(listOf(a.copy(alpha = 0.55f), b.copy(alpha = 0.25f), bg))),
     ) {
-        Column(
-            Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(horizontal = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Row(Modifier.fillMaxWidth().padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-                IconButton(onClick = onClose) { Icon(Icons.Filled.KeyboardArrowDown, contentDescription = stringResource(R.string.close)) }
-                Spacer(Modifier.weight(1f))
-                LivePill()
-                Spacer(Modifier.weight(1f))
-                IconButton(onClick = onFavorite) {
-                    Icon(
-                        if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                        contentDescription = stringResource(if (isFavorite) R.string.unfavorite else R.string.favorite),
-                        tint = if (isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
-                    )
-                }
-            }
-            Spacer(Modifier.weight(0.6f))
-            StationArt(
-                station,
-                size = 264.dp,
-                corner = 36.dp,
-                modifier = Modifier.shadow(32.dp, RoundedCornerShape(36.dp), ambientColor = a, spotColor = a),
-            )
-            Spacer(Modifier.height(32.dp))
-            Text(
-                station.name,
-                style = MaterialTheme.typography.headlineMedium,
-                textAlign = TextAlign.Center,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Spacer(Modifier.height(6.dp))
-            Text(
-                error?.let { "Can't play this stream ($it)" } ?: station.detail,
-                style = MaterialTheme.typography.bodyLarge,
-                color = if (error != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            if (station.tags.isNotEmpty()) {
-                Spacer(Modifier.height(14.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    station.tags.take(3).forEach { tag ->
-                        AssistChip(
-                            onClick = {},
-                            label = { Text(tag) },
-                            shape = RoundedCornerShape(50),
-                            colors = AssistChipDefaults.assistChipColors(containerColor = Color.White.copy(alpha = 0.06f)),
-                            border = null,
+        // This screen draws its own background instead of sitting in a Surface, so it sets the
+        // content color itself. Without it, text and icons fall back to black.
+        CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurface) {
+            Column(
+                Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(horizontal = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Row(Modifier.fillMaxWidth().padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                    IconButton(onClick = onClose) { Icon(Icons.Filled.KeyboardArrowDown, contentDescription = stringResource(R.string.close)) }
+                    Spacer(Modifier.weight(1f))
+                    LivePill()
+                    Spacer(Modifier.weight(1f))
+                    IconButton(onClick = onFavorite) {
+                        Icon(
+                            if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                            contentDescription = stringResource(if (isFavorite) R.string.unfavorite else R.string.favorite),
+                            tint = if (isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                         )
                     }
                 }
+                Spacer(Modifier.weight(0.6f))
+                StationArt(
+                    station,
+                    size = 264.dp,
+                    corner = 36.dp,
+                    modifier = Modifier.shadow(32.dp, RoundedCornerShape(36.dp), ambientColor = a, spotColor = a),
+                )
+                Spacer(Modifier.height(32.dp))
+                Text(
+                    station.name,
+                    style = MaterialTheme.typography.headlineMedium,
+                    textAlign = TextAlign.Center,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Spacer(Modifier.height(6.dp))
+                Text(
+                    error?.let { "Can't play this stream ($it)" } ?: station.detail,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = if (error != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                if (station.tags.isNotEmpty()) {
+                    Spacer(Modifier.height(14.dp))
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        station.tags.take(3).forEach { tag ->
+                            AssistChip(
+                                onClick = {},
+                                label = { Text(tag) },
+                                shape = RoundedCornerShape(50),
+                                colors = AssistChipDefaults.assistChipColors(containerColor = Color.White.copy(alpha = 0.06f)),
+                                border = null,
+                            )
+                        }
+                    }
+                }
+                Spacer(Modifier.weight(0.5f))
+                Box(contentAlignment = Alignment.Center) {
+                    FilledIconButton(
+                        onClick = onToggle,
+                        modifier = Modifier.size(84.dp),
+                        shape = CircleShape,
+                        colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.colorScheme.primary),
+                    ) { PlayPauseIcon(playing, modifier = Modifier.size(40.dp)) }
+                }
+                Spacer(Modifier.height(16.dp))
+                EqualizerBars(playing && !buffering)
+                Spacer(Modifier.weight(0.5f))
+                AdFreeOffer(ads, onWatchAd)
+                Spacer(Modifier.height(16.dp))
             }
-            Spacer(Modifier.weight(0.5f))
-            Box(contentAlignment = Alignment.Center) {
-                FilledIconButton(
-                    onClick = onToggle,
-                    modifier = Modifier.size(84.dp),
-                    shape = CircleShape,
-                    colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.colorScheme.primary),
-                ) { PlayPauseIcon(playing, modifier = Modifier.size(40.dp)) }
-            }
-            Spacer(Modifier.height(16.dp))
-            EqualizerBars(playing && !buffering)
-            Spacer(Modifier.weight(0.5f))
-            AdFreeOffer(ads, onWatchAd)
-            Spacer(Modifier.height(16.dp))
         }
     }
 }
