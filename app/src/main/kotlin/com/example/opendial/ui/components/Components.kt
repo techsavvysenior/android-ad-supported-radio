@@ -160,14 +160,17 @@ fun StationCard(station: Station, isCurrent: Boolean, playing: Boolean, onClick:
             }
         }
         Spacer(Modifier.height(10.dp))
-        Text(station.name, style = MaterialTheme.typography.titleSmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
-        Text(
-            station.tags.take(2).joinToString(" · ").ifEmpty { station.detail },
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
+        // The card is clipped to rounded corners, so the captions sit inside the curve.
+        Column(Modifier.padding(start = 4.dp, end = 4.dp, bottom = 8.dp)) {
+            Text(station.name, style = MaterialTheme.typography.titleSmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Text(
+                station.tags.take(2).joinToString(" · ").ifEmpty { station.detail },
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
     }
 }
 
