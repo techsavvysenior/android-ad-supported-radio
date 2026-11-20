@@ -8,9 +8,14 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
 
+    <!--
+        AppsFlyer's own manifest sets allowBackup="true" with rules that exclude its data.
+        This app opts out of backup entirely, so it replaces that value (AppsFlyer's install guide).
+    -->
     <application
         android:name=".OpenDialApp"
         android:allowBackup="false"
+        tools:replace="android:allowBackup"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
